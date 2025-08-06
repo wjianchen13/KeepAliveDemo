@@ -1,4 +1,4 @@
-package com.example.keepalivedemo.socket.websocket
+package com.example.keepalivedemo.socket2
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,16 +10,8 @@ import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.text.TextUtils
-import com.example.keepalivedemo.socket.WebSocketPush
 import com.example.keepalivedemo.socket.common.ConstConfig
 import com.example.keepalivedemo.socket.utils.Logs
-import com.example.keepalivedemo.socket.utils.RxUtil
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.net.URI
-import java.util.*
 
 
 /**
@@ -27,13 +19,9 @@ import java.util.*
  * @author by Zian
  * @date on 2019/08/19 10
  */
-class PushService : Service() {
+class PushService2 : Service() {
 
     private val TAG = "PushService"
-    private val TAG_WEBSOCKET = "WebSocket"
-    private var client: JWebSocketClient?= null
-
-    val compositeDisposable = CompositeDisposable()
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -43,10 +31,6 @@ class PushService : Service() {
         Logs.w(TAG, "PushService --> onCreate")
         super.onCreate()
         startForegroundService()
-
-        initWebSocket()
-        heartbeat()
-        //logService()
     }
 
     //service 只有一个实例 多次调用会调用onStartCommand
@@ -62,17 +46,7 @@ class PushService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.clear()
         Logs.w(TAG, "PushService --> onDestroy")
-    }
-
-    //打印服務運行中
-    fun logService() {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                Logs.d(TAG, "running...")
-            }
-        }, 0, 10000)
     }
 
     /**
@@ -117,50 +91,5 @@ class PushService : Service() {
 //        startForeground(1, builder.build())
     }
 
-    /**
-     * webSocket
-     */
-    fun initWebSocket() {
-        if (TextUtils.isEmpty(WebSocketPush.getWebSocketUri())) {
-            Logs.e(TAG_WEBSOCKET, "web socket uri is empty")
-            return
-        }
-        val disposable = Observable.just("")
-            .observeOn(Schedulers.io())
-            .subscribe {
-                val uri = URI.create(WebSocketPush.getWebSocketUri())
-                client = object : JWebSocketClient(uri, this) {}
-                try {
-                    client?.connectBlocking()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        compositeDisposable.add(disposable)
-    }
-
-    /**
-     * 心跳检测
-     */
-    fun heartbeat() {
-        var sendTime = 0L
-        val disposable = RxUtil.polling(5000, WebSocketPush.getBeatMilliseconds())
-            .subscribe {
-                Logs.i(TAG_WEBSOCKET, "heart beating....")
-                if (System.currentTimeMillis() - sendTime >= WebSocketPush.getBeatMilliseconds()) {
-                    client?.let {
-                        if (!it.isOpen) {
-                            it.close()
-                            Logs.e(TAG, "web socket try to reconnect.... ${WebSocketPush.getWebSocketUri()}")
-                            initWebSocket()
-                        } else {
-                            it.send("beating " + System.currentTimeMillis())
-                        }
-                    }
-                }
-                sendTime = System.currentTimeMillis()
-            }
-        compositeDisposable.add(disposable)
-    }
 }
 

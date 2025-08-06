@@ -14,8 +14,8 @@ object RxUtil {
     /**
      * 轮询
      */
-    fun polling(period: Long): Observable<Long> {
-        return Observable.interval(0, period, TimeUnit.MILLISECONDS)
+    fun polling(delay: Long, period: Long): Observable<Long> {
+        return Observable.interval(delay, period, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

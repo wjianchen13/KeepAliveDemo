@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="Android 保活测试" />
+        android:text="Android 不在Service启动socket，测试开启前台服务是否有效" />
 
     <Button
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         android:gravity="center"
         android:textAllCaps="false"
         android:onClick="onTest1"
-        android:text="Android 保活测试" />
+        android:text="启动Socket" />
 
     <Button
         android:layout_width="match_parent"
@@ -30,6 +30,24 @@
         android:gravity="center"
         android:textAllCaps="false"
         android:onClick="onTest2"
-        android:text="Android 保活测试2" />
+        android:text="启动前台服务" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:onClick="onTest3"
+        android:text="关闭Socket" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:onClick="onTest4"
+        android:text="关闭前台服务" />
 
 </LinearLayout>

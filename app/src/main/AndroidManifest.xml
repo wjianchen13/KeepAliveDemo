@@ -43,6 +43,10 @@
         <receiver android:name=".socket.PushReceiver"/>
 
         <activity android:name=".socket.SocketActivity" />
+        <service android:name="com.example.keepalivedemo.socket2.PushService2"
+            android:foregroundServiceType="microphone|mediaPlayback"/>
+        <activity android:name=".socket2.SocketActivity2" />
+
     </application>
 
 </manifest>
